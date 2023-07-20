@@ -1,34 +1,11 @@
-# FROM node:18-alpine as development
-
-# WORKDIR /app
-
-# COPY package.json .
-
-# # We use apk instead of apt-get because this image is alpine based
-# RUN apk update && apk add openssl
-
-# RUN npm install
-# RUN npm install @prisma/client
-
-# COPY prisma ./prisma/
-
-# RUN npx prisma generate 
-
-# COPY . .
-
-# EXPOSE 3000
-# EXPOSE 5555
-
-# CMD ["npm", "run", "start:dev"]
-
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm install
-RUN npm install @prisma/client
+RUN npm ci
+RUN npm ci @prisma/client
 
 COPY prisma ./prisma/
 
@@ -37,6 +14,9 @@ RUN npx prisma generate
 COPY . .
 
 RUN npm run build
+
+RUN npm ci --only=production && npm cache clean --force
+
 
 FROM node:18-alpine as production
 
@@ -47,4 +27,4 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
 
-CMD [  "npm", "run", "start:migrate:prod" ]
+CMD [  "node", "dist/main.js" ]
