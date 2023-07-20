@@ -1,3 +1,11 @@
+.git
 /node_modules
 .env
 Dockerfile
+/dist
+.eslint*
+.prettier*
+.gitignore
+.gitattributes
+.dockerignore
+README.md
