@@ -6,7 +6,7 @@ import {
 import { TaskEntity } from '../entities/task.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDTO } from '../tasks/dtos/create-task.dto';
-import { QueryTasksDTO, TasksKeys } from '../tasks/dtos/query-tasks.dto';
+import { QueryTasksDTO } from '../tasks/dtos/query-tasks.dto';
 import { UpdateTaskDTO } from '../tasks/dtos/update-task.dto';
 import { Prisma } from '@prisma/client';
 import { TaskListEntity } from '../entities/task-list.entity';
