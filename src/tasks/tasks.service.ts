@@ -4,6 +4,7 @@ import { UpdateTaskDTO } from './dtos/update-task.dto';
 import { QueryTasksDTO } from './dtos/query-tasks.dto';
 import { TasksRepository } from '../repositories/tasks.repository';
 import { TaskEntity } from '../entities/task.entity';
+import { TaskListEntity } from '../entities/task-list.entity';
 
 @Injectable()
 export class TasksService {
@@ -24,7 +25,7 @@ export class TasksService {
     return await this.repository.update(guid, updateTaskDTO);
   }
 
-  async queryTasks(queryTasksDTO: QueryTasksDTO): Promise<any> {
+  async queryTasks(queryTasksDTO: QueryTasksDTO): Promise<TaskListEntity> {
     return await this.repository.query(queryTasksDTO);
   }
 

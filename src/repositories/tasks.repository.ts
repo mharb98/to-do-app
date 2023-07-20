@@ -6,8 +6,10 @@ import {
 import { TaskEntity } from '../entities/task.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDTO } from '../tasks/dtos/create-task.dto';
-import { QueryTasksDTO } from '../tasks/dtos/query-tasks.dto';
+import { QueryTasksDTO, TasksKeys } from '../tasks/dtos/query-tasks.dto';
 import { UpdateTaskDTO } from '../tasks/dtos/update-task.dto';
+import { Prisma } from '@prisma/client';
+import { TaskListEntity } from '../entities/task-list.entity';
 
 @Injectable()
 export class TasksRepository {
@@ -50,8 +52,32 @@ export class TasksRepository {
     }
   }
 
-  async query(queryTasksDTO: QueryTasksDTO) {
-    return null;
+  async query(queryTasksDTO: QueryTasksDTO): Promise<TaskListEntity> {
+    const page = queryTasksDTO.page || 1;
+    const pageSize = queryTasksDTO.pageSize || 20;
+    try {
+      const query: Prisma.TaskWhereInput = {
+        name: { contains: queryTasksDTO.name, mode: 'insensitive' },
+        time: queryTasksDTO.time,
+        isDaily: queryTasksDTO.isDaily,
+      };
+
+      const count = await this.prisma.task.count({
+        where: query,
+      });
+
+      const tasks: TaskEntity[] = await this.prisma.task.findMany({
+        where: query,
+        skip: page - 1,
+        take: pageSize,
+        select: this.taskSerializer,
+      });
+
+      return { count: count, tasks: tasks };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Something went wrong');
+    }
   }
 
   async findUnique(guid: string): Promise<TaskEntity> {

@@ -23,6 +23,7 @@ import { CreateTaskDTO } from './dtos/create-task.dto';
 import { QueryTasksDTO } from './dtos/query-tasks.dto';
 import { UpdateTaskDTO } from './dtos/update-task.dto';
 import { TaskEntity } from '../entities/task.entity';
+import { TaskListEntity } from '../entities/task-list.entity';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -44,10 +45,15 @@ export class TasksController {
   }
 
   @ApiOperation({ description: 'Query tasks created' })
-  @ApiOkResponse({ description: 'Returns a list of tasks created' })
+  @ApiOkResponse({
+    description: 'Returns a list of tasks created',
+    type: TaskListEntity,
+  })
   @ApiInternalServerErrorResponse({ description: 'Something went wrong' })
   @Get()
-  async queryTasks(@Query() queryTasksDTO: QueryTasksDTO): Promise<any> {
+  async queryTasks(
+    @Query() queryTasksDTO: QueryTasksDTO,
+  ): Promise<TaskListEntity> {
     return await this.tasksService.queryTasks(queryTasksDTO);
   }
 
