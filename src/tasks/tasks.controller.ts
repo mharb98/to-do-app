@@ -22,6 +22,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from './dtos/create-task.dto';
 import { QueryTasksDTO } from './dtos/query-tasks.dto';
 import { UpdateTaskDTO } from './dtos/update-task.dto';
+import { TaskEntity } from '../entities/task.entity';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -31,13 +32,14 @@ export class TasksController {
   @ApiOperation({ description: 'Adds a new task to the to do list' })
   @ApiCreatedResponse({
     description: 'Task is created',
+    type: TaskEntity,
   })
   @ApiInternalServerErrorResponse({
     description: 'Something went wrong',
   })
   @HttpCode(201)
   @Post()
-  async createTask(@Body() createTaskDTO: CreateTaskDTO): Promise<any> {
+  async createTask(@Body() createTaskDTO: CreateTaskDTO): Promise<TaskEntity> {
     return await this.tasksService.createTask(createTaskDTO);
   }
 
@@ -49,33 +51,39 @@ export class TasksController {
     return await this.tasksService.queryTasks(queryTasksDTO);
   }
 
-  @ApiOperation({ description: 'Return a task by id' })
-  @ApiOkResponse({ description: 'Returns the requested task' })
+  @ApiOperation({ description: 'Return a task by guid' })
+  @ApiOkResponse({
+    description: 'Returns the requested task',
+    type: TaskEntity,
+  })
   @ApiNotFoundResponse({ description: 'Requested task not found' })
   @ApiInternalServerErrorResponse({ description: 'Something went wrong' })
-  @Get(':id')
-  async getTask(@Param('id') id: string) {
-    return await this.tasksService.getTask(id);
+  @Get(':guid')
+  async getTask(@Param('guid') guid: string): Promise<TaskEntity> {
+    return await this.tasksService.getTask(guid);
   }
 
   @ApiOperation({ description: 'Update the requested task' })
-  @ApiOkResponse({ description: 'Record updated successfully' })
+  @ApiOkResponse({
+    description: 'Record updated successfully',
+    type: TaskEntity,
+  })
   @ApiNotFoundResponse({ description: 'Requested task not found' })
   @ApiInternalServerErrorResponse({ description: 'Something went wrong' })
-  @Put(':id')
+  @Put(':guid')
   async updateTask(
-    @Param('id') id: string,
+    @Param('guid') guid: string,
     @Body() updateTaskDTO: UpdateTaskDTO,
-  ) {
-    return await this.tasksService.updateTask(id, updateTaskDTO);
+  ): Promise<TaskEntity> {
+    return await this.tasksService.updateTask(guid, updateTaskDTO);
   }
 
   @ApiOperation({ description: 'Delete the requested task' })
   @ApiNoContentResponse({ description: 'Record deleted successfully' })
   @ApiNotFoundResponse({ description: 'Requested task not found' })
   @ApiInternalServerErrorResponse({ description: 'Something went wrong' })
-  @Delete(':id')
-  async deleteTask(@Param('id') id: string) {
-    return await this.tasksService.deleteTask(id);
+  @Delete(':guid')
+  async deleteTask(@Param('guid') guid: string): Promise<void> {
+    await this.tasksService.deleteTask(guid);
   }
 }
