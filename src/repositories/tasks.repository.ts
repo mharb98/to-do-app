@@ -27,12 +27,7 @@ export class TasksRepository {
         data: createTaskDTO,
         select: this.taskSerializer,
       });
-      // return await this.prisma.task.create({
-      //   data: createTaskDTO,
-      //   select: this.taskSerializer,
-      // });
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException('Something went wrong');
     }
   }

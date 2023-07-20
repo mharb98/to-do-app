@@ -14,7 +14,6 @@ export class TasksService {
   }
 
   async getTask(guid: string): Promise<TaskEntity> {
-    console.log(guid);
     return await this.repository.findUnique(guid);
   }
 
